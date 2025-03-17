@@ -1,5 +1,5 @@
 class Barril:
-    def __init__(self,capacidad,estado,tipo,id):
+    def __init__(self,id,capacidad,estado,tipo):
         self.id = id  # ID autoincrementada
         self.tipo = tipo  # Roja, Negra, Rubia, IPA, APA
         self.capacidad = capacidad #10L, 20L, 50L

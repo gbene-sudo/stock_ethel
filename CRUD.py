@@ -52,7 +52,7 @@ def borrar_barril(barril_id):
     conn.commit()
     conn.close()
 
-def filtro_por_tipo(barril_tipo): #Funcion para mostrar todos los barriles de un tipo (Rubia, Roja, etc)
+def filtro_por_tipo(barril_tipo): #Funcion para mostrar todos los barriles de un tipo (Rubia, Roja)
     conn = conectar()
     cursor = conn.cursor()
 
