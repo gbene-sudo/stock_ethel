@@ -1,101 +1,168 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 from models import Barril
-from CRUD import actualizar_barril,filtro_por_estado,obtener_barriles,filtro_por_litros,filtro_por_tipo,borrar_barril,crear_barril
+from CRUD import actualizar_barril, obtener_barriles, borrar_barril, crear_barril
 
 def iniciar_app():
     ventana = tk.Tk()
-    ventana.title("Control de Stock")
-    ventana.geometry("400x400")
+    ventana.title("Control de Stock - Cervecería")
+    ventana.geometry("800x500")
 
-    # Etiqueta de bienvenida
-    label = tk.Label(ventana, text="Bienvenido al Control de Stock")
-    label.pack(pady=20)
+    # Función para refrescar los datos en la tabla
+    def cargar_barriles():
+        for row in tree.get_children():
+            tree.delete(row)
 
-    # Entradas para agregar o editar barriles
-    etiqueta_tipo = tk.Label(ventana, text="Tipo de Barril:")
-    etiqueta_tipo.pack()
-    entry_tipo = tk.Entry(ventana)
-    entry_tipo.pack(pady=5)
+        barriles = obtener_barriles()
 
-    etiqueta_capacidad = tk.Label(ventana, text="Capacidad (en L):")
-    etiqueta_capacidad.pack()
-    entry_capacidad = tk.Entry(ventana)
-    entry_capacidad.pack(pady=5)
+        for barril in barriles:
+            tree.insert("", tk.END, values=(barril.id, barril.tipo, barril.capacidad, barril.estado))
 
-    etiqueta_estado = tk.Label(ventana, text="Estado del Barril:")
-    etiqueta_estado.pack()
-    entry_estado = tk.Entry(ventana)
-    entry_estado.pack(pady=5)
+    # Función para abrir la ventana emergente de "Cargar"
+    def abrir_ventana_cargar():
+        def guardar_barril():
+            tipo = entry_tipo.get()
+            capacidad = entry_capacidad.get()
+            estado = entry_estado.get()
 
-    etiqueta_id = tk.Label(ventana, text="ID del Barril (para eliminar o actualizar):")
-    etiqueta_id.pack()
-    entry_id = tk.Entry(ventana)
-    entry_id.pack(pady=5)
+            if tipo and capacidad and estado:
+                try:
+                    capacidad = float(capacidad)
+                    crear_barril(tipo, capacidad, estado)
+                    messagebox.showinfo("Éxito", f"Barril '{tipo}' creado correctamente.")
+                    cargar_barriles()
+                    top.destroy()
+                except ValueError:
+                    messagebox.showerror("Error", "Capacidad debe ser un número.")
+            else:
+                messagebox.showwarning("Campos vacíos", "Complete todos los campos.")
 
-    # Función para agregar barril
-    def agregar():
-        tipo = entry_tipo.get()
-        capacidad = entry_capacidad.get()
-        estado = entry_estado.get()
-        if tipo and capacidad and estado:
-            # Aquí agregas el barril con la función agregar_barril (debes adaptarlo si es necesario)
-            crear_barril(tipo, capacidad, estado)
-            messagebox.showinfo("Éxito", f"Barril de tipo '{tipo}' agregado correctamente.")
-        else:
-            messagebox.showwarning("Advertencia", "Por favor ingrese todos los campos.")
+        top = tk.Toplevel(ventana)
+        top.title("Cargar Nuevo Barril")
+        top.geometry("300x250")
 
-    # Función para eliminar barril
-    def eliminar():
-        barril_id = entry_id.get()
-        if barril_id:
-            # Eliminar barril por ID
+        tk.Label(top, text="Tipo:").pack(pady=5)
+        entry_tipo = tk.Entry(top)
+        entry_tipo.pack()
+
+        tk.Label(top, text="Capacidad (L):").pack(pady=5)
+        entry_capacidad = tk.Entry(top)
+        entry_capacidad.pack()
+
+        tk.Label(top, text="Estado:").pack(pady=5)
+        entry_estado = tk.Entry(top)
+        entry_estado.pack()
+
+        tk.Button(top, text="Guardar", command=guardar_barril).pack(pady=20)
+
+    # Función para eliminar el barril seleccionado
+    def eliminar_barril():
+        seleccionado = tree.focus()
+        if not seleccionado:
+            messagebox.showwarning("Atención", "Seleccione un barril para eliminar.")
+            return
+
+        valores = tree.item(seleccionado, "values")
+        barril_id = valores[0]
+
+        confirmacion = messagebox.askyesno("Eliminar", f"¿Está seguro de eliminar el barril ID {barril_id}?")
+        if confirmacion:
             borrar_barril(barril_id)
-            messagebox.showinfo("Éxito", f"Barril con ID '{barril_id}' eliminado.")
-        else:
-            messagebox.showwarning("Advertencia", "Por favor ingrese un ID válido.")
+            cargar_barriles()
+            messagebox.showinfo("Éxito", f"Barril ID {barril_id} eliminado.")
 
-    # Función para actualizar barril
-    def actualizar():
-        barril_id = entry_id.get()
-        tipo = entry_tipo.get()
-        capacidad = entry_capacidad.get()
-        estado = entry_estado.get()
+    # Función para abrir la ventana emergente de "Actualizar"
+    def abrir_ventana_actualizar():
+        seleccionado = tree.focus()
+        if not seleccionado:
+            messagebox.showwarning("Atención", "Seleccione un barril para actualizar.")
+            return
 
-        if barril_id and tipo and capacidad and estado:
-            # Actualizar barril con la función actualizar_barril (debes adaptarlo si es necesario)
-            actualizar_barril(barril_id, tipo, capacidad, estado)
-            messagebox.showinfo("Éxito", f"Barril con ID '{barril_id}' actualizado.")
-        else:
-            messagebox.showwarning("Advertencia", "Por favor ingrese todos los campos.")
+        valores = tree.item(seleccionado, "values")
+        barril_id = valores[0]
+        tipo_actual = valores[1]
+        capacidad_actual = valores[2]
+        estado_actual = valores[3]
 
-    # Función para mostrar barriles
-    def mostrar_barriles():
-        tipo = entry_tipo.get()  # Podemos filtrar por tipo si se ingresa
-        barriles = filtro_por_tipo(tipo)
-        if barriles:
-            resultados = "\n".join([f"ID: {barril.id}, Tipo: {barril.tipo}, Capacidad: {barril.capacidad}L, Estado: {barril.estado}" for barril in barriles])
-            messagebox.showinfo("Resultado", resultados)
-        else:
-            messagebox.showinfo("Resultado", "No se encontraron barriles.")
+        def guardar_actualizacion():
+            nuevo_tipo = entry_tipo.get()
+            nueva_capacidad = entry_capacidad.get()
+            nuevo_estado = entry_estado.get()
 
-    # Botón para agregar barril
-    btn_agregar = tk.Button(ventana, text="Agregar Barril", command=agregar)
-    btn_agregar.pack(pady=10)
+            if nuevo_tipo and nueva_capacidad and nuevo_estado:
+                try:
+                    nueva_capacidad = float(nueva_capacidad)
+                    actualizar_barril(barril_id, nuevo_tipo, nueva_capacidad, nuevo_estado)
+                    messagebox.showinfo("Éxito", f"Barril ID {barril_id} actualizado correctamente.")
+                    cargar_barriles()
+                    top.destroy()
+                except ValueError:
+                    messagebox.showerror("Error", "Capacidad debe ser un número.")
+            else:
+                messagebox.showwarning("Campos vacíos", "Complete todos los campos.")
 
-    # Botón para eliminar barril
-    btn_eliminar = tk.Button(ventana, text="Eliminar Barril", command=eliminar)
+        top = tk.Toplevel(ventana)
+        top.title(f"Actualizar Barril ID {barril_id}")
+        top.geometry("300x250")
+
+        tk.Label(top, text="Tipo:").pack(pady=5)
+        entry_tipo = tk.Entry(top)
+        entry_tipo.insert(0, tipo_actual)
+        entry_tipo.pack()
+
+        tk.Label(top, text="Capacidad (L):").pack(pady=5)
+        entry_capacidad = tk.Entry(top)
+        entry_capacidad.insert(0, capacidad_actual)
+        entry_capacidad.pack()
+
+        tk.Label(top, text="Estado:").pack(pady=5)
+        entry_estado = tk.Entry(top)
+        entry_estado.insert(0, estado_actual)
+        entry_estado.pack()
+
+        tk.Button(top, text="Guardar Cambios", command=guardar_actualizacion).pack(pady=20)
+
+    # ===================
+    # Tabla de Barriles (Treeview)
+    # ===================
+    columnas = ("ID", "Tipo", "Capacidad (L)", "Estado")
+    tree = ttk.Treeview(ventana, columns=columnas, show="headings")
+
+    # Definimos los encabezados
+    tree.heading("ID", text="ID")
+    tree.heading("Tipo", text="Tipo")
+    tree.heading("Capacidad (L)", text="Capacidad (L)")
+    tree.heading("Estado", text="Estado")
+
+    # Configuramos el ancho de las columnas
+    tree.column("ID", width=50)
+    tree.column("Tipo", width=150)
+    tree.column("Capacidad (L)", width=120)
+    tree.column("Estado", width=150)
+
+    tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+    # Scrollbar vertical para el treeview
+    scrollbar = ttk.Scrollbar(ventana, orient=tk.VERTICAL, command=tree.yview)
+    tree.configure(yscroll=scrollbar.set)
+    scrollbar.pack(side=tk.LEFT, fill=tk.Y)
+
+    # ===================
+    # Botones de acción
+    # ===================
+    contenedor_botones = tk.Frame(ventana)
+    contenedor_botones.pack(side=tk.RIGHT, fill=tk.Y, padx=10)
+
+    btn_cargar = tk.Button(contenedor_botones, text="Cargar Barril", width=20, command=abrir_ventana_cargar)
+    btn_cargar.pack(pady=10)
+
+    btn_eliminar = tk.Button(contenedor_botones, text="Eliminar Barril", width=20, command=eliminar_barril)
     btn_eliminar.pack(pady=10)
 
-    # Botón para actualizar barril
-    btn_actualizar = tk.Button(ventana, text="Actualizar Barril", command=actualizar)
+    btn_actualizar = tk.Button(contenedor_botones, text="Actualizar Barril", width=20, command=abrir_ventana_actualizar)
     btn_actualizar.pack(pady=10)
 
-    # Botón para mostrar barriles
-    btn_mostrar = tk.Button(ventana, text="Mostrar Barriles", command=mostrar_barriles)
-    btn_mostrar.pack(pady=10)
+    # Cargar la tabla al iniciar
+    cargar_barriles()
 
-
-    # Iniciar la interfaz gráfica
     ventana.mainloop()
-

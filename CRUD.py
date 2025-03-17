@@ -34,11 +34,13 @@ def obtener_barriles():
     conn.close()
     return barriles
 
-def actualizar_barril(barril_id, nuevo_estado):
+def actualizar_barril(barril_id, tipo_barril, nuevo_estado, nuevo_capacidad):
     conn = conectar()
     cursor = conn.cursor()
 
     cursor.execute(" UPDATE barriles SET estado = ? WHERE id = ? ", (nuevo_estado, barril_id))
+    cursor.execute(" UPDATE barriles SET tipo = ? WHERE id = ? ", (tipo_barril, barril_id))
+    cursor.execute(" UPDATE barriles SET capacidad = ? WHERE id = ? ", (nuevo_capacidad, barril_id))
 
     conn.commit()
     conn.close()
