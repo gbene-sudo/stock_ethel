@@ -11,7 +11,7 @@ def crear_tabla():
             CREATE TABLE IF NOT EXISTS barriles (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 tipo TEXT NOT NULL,
-                capacidad REAL NOT NULL,
+                capacidad INTEGER NOT NULL,
                 estado TEXT NOT NULL
             )
         """)

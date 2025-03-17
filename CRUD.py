@@ -6,7 +6,7 @@ def crear_barril(tipo,capacidad,estado): #Creacion de un barril
     cursor = conn.cursor()
 
     cursor.execute("""
-        INSERT INTO barriles (tipo,estado,capacidad)
+        INSERT INTO barriles (tipo,capacidad,estado)
             VALUES (?,?,?)
     """, (tipo, capacidad, estado))
 
@@ -38,9 +38,9 @@ def actualizar_barril(barril_id, tipo_barril, nuevo_estado, nuevo_capacidad): #A
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute(" UPDATE barriles SET estado = ? WHERE id = ? ", (nuevo_estado, barril_id))
     cursor.execute(" UPDATE barriles SET tipo = ? WHERE id = ? ", (tipo_barril, barril_id))
     cursor.execute(" UPDATE barriles SET capacidad = ? WHERE id = ? ", (nuevo_capacidad, barril_id))
+    cursor.execute(" UPDATE barriles SET estado = ? WHERE id = ? ", (nuevo_estado, barril_id))
 
     conn.commit()
     conn.close()

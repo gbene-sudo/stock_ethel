@@ -5,7 +5,7 @@ from CRUD import actualizar_barril, obtener_barriles, borrar_barril, crear_barri
 
 def iniciar_app():
     ventana = tk.Tk()
-    ventana.title("Control de Stock - Cervecería")
+    ventana.title("Cervecería Ethel")
     ventana.geometry("800x500")
 
     # Función para refrescar los datos en la tabla
@@ -27,7 +27,7 @@ def iniciar_app():
 
             if tipo and capacidad and estado:
                 try:
-                    capacidad = float(capacidad)
+                    #capacidad = int(capacidad)
                     crear_barril(tipo, capacidad, estado)
                     messagebox.showinfo("Éxito", f"Barril '{tipo}' creado correctamente.")
                     cargar_barriles()
@@ -91,8 +91,8 @@ def iniciar_app():
 
             if nuevo_tipo and nueva_capacidad and nuevo_estado:
                 try:
-                    nueva_capacidad = float(nueva_capacidad)
-                    actualizar_barril(barril_id, nuevo_tipo, nueva_capacidad, nuevo_estado)
+                    #nueva_capacidad = int(nueva_capacidad)
+                    actualizar_barril(barril_id, nuevo_tipo, nueva_capacidad,  nuevo_estado)
                     messagebox.showinfo("Éxito", f"Barril actualizado correctamente.")
                     cargar_barriles()
                     top.destroy()
