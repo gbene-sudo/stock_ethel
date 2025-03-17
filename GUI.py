@@ -95,6 +95,7 @@ def iniciar_app():
     btn_mostrar = tk.Button(ventana, text="Mostrar Barriles", command=mostrar_barriles)
     btn_mostrar.pack(pady=10)
 
+    ventana.lift()
     # Iniciar la interfaz gráfica
     ventana.mainloop()
 
