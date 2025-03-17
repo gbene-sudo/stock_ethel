@@ -54,11 +54,22 @@ def borrar_barril(barril_id): #Borrar un barril usando la id como parametro
     conn.commit()
     conn.close()
 
-def filtro_por_tipo(barril_tipo): #Funcion para mostrar todos los barriles de un tipo (Rubia, Roja)
+def filtro_por_tipo(barril_tipo): #Funcion para filtrar por orden la lista segun el tipo
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute(" SELECT * FROM barriles WHERE tipo LIKE ? ", (f"%{barril_tipo}%",))
+    cursor.execute("""
+                SELECT * FROM barriles 
+                ORDER BY 
+                    CASE capacidad
+                        WHEN 'Summer' THEN 1
+                        WHEN 'Wheat' THEN 2
+                        WHEN 'Porter' THEN 3
+                        WHEN 'Irish' THEN 4
+                        WHEN 'Hoppy' THEN 5
+                    END
+            """)
+
     rows = cursor.fetchall() #fetchone() devuelve solo una fila
 
     barriles = []
@@ -69,11 +80,21 @@ def filtro_por_tipo(barril_tipo): #Funcion para mostrar todos los barriles de un
     conn.close()
     return barriles
 
-def filtro_por_litros(barril_capacidad): #Funcion para mostrar la info de una camada de barriles de la misma capacidad
+def filtro_por_litros(barril_capacidad): #Funcion para filtrar por orden la lista segun la capacidad
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute(" SELECT * FROM barriles WHERE capacidad LIKE ? ", (f"%{barril_capacidad}%",))
+    cursor.execute("""
+            SELECT * FROM barriles 
+            ORDER BY 
+                CASE capacidad
+                    WHEN '50' THEN 1
+                    WHEN '30' THEN 2
+                    WHEN '20' THEN 3
+                    WHEN '15' THEN 4
+                    WHEN '10' THEN 5
+                END
+        """)
     rows = cursor.fetchall()  # fetchone() devuelve solo una fila
 
     barriles = []
@@ -84,11 +105,21 @@ def filtro_por_litros(barril_capacidad): #Funcion para mostrar la info de una ca
     conn.close()
     return barriles
 
-def filtro_por_estado(barril_estado): #Funcion para mostrar la info de una camada de barriles con el mismo estado
+def filtro_por_estado(barril_estado): #Funcion para filtrar por orden la lista segun el estado
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute(" SELECT * FROM barriles WHERE estado LIKE ? ", (f"%{barril_estado}%",))
+    cursor.execute("""
+        SELECT * FROM barriles 
+        ORDER BY 
+            CASE estado
+                WHEN 'Lleno' THEN 1
+                WHEN 'Incompleto' THEN 2
+                WHEN 'Entregado' THEN 3
+                WHEN 'Bar' THEN 4
+                WHEN 'Latas' THEN 5
+            END
+    """)
     rows = cursor.fetchall()  # fetchone() devuelve solo una fila
 
     barriles = []
@@ -99,3 +130,12 @@ def filtro_por_estado(barril_estado): #Funcion para mostrar la info de una camad
     conn.close()
     return barriles
 
+def filtro_por_id(barril_id): #Funcion para mostrar la info de un solo barril usando la id como parametro
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute(" SELECT * FROM barriles WHERE id = ? ", (barril_id,))
+    rows = cursor.fetchone()  # fetchone() devuelve solo una fila
+
+    conn.close()
+    return rows
