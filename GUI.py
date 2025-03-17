@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from models import Barril
-from CRUD import actualizar_barril, obtener_barriles, borrar_barril, crear_barril
+from CRUD import actualizar_barril, obtener_barriles, borrar_barril, crear_barril, order_by_id, filtro_por_id
+# Importa tus funciones de filtros
+from CRUD import filtro_por_tipo, filtro_por_litros, filtro_por_estado
+
 
 def iniciar_app():
     ventana = tk.Tk()
@@ -9,14 +12,37 @@ def iniciar_app():
     ventana.geometry("800x500")
 
     # Función para refrescar los datos en la tabla
-    def cargar_barriles():
+    def cargar_barriles(lista_barriles=None):
         for row in tree.get_children():
             tree.delete(row)
 
-        barriles = obtener_barriles()
+        # Si no pasamos una lista, carga todos los barriles
+        if lista_barriles is None:
+            barriles = obtener_barriles()
+        else:
+            barriles = lista_barriles
 
         for barril in barriles:
             tree.insert("", tk.END, values=(barril.id, barril.tipo, barril.capacidad, barril.estado))
+
+    # =====================
+    # FUNCIONES PARA ORDENAR
+    # =====================
+    def ordenar_por_tipo_click():
+        barriles_ordenados = filtro_por_tipo()
+        cargar_barriles(barriles_ordenados)
+
+    def ordenar_por_id_click():
+        barriles_ordenados = order_by_id()
+        cargar_barriles(barriles_ordenados)
+
+    def ordenar_por_capacidad_click():
+        barriles_ordenados = filtro_por_litros()
+        cargar_barriles(barriles_ordenados)
+
+    def ordenar_por_estado_click():
+        barriles_ordenados = filtro_por_estado()
+        cargar_barriles(barriles_ordenados)
 
     # Función para abrir la ventana emergente de "Cargar"
     def abrir_ventana_cargar():
@@ -27,7 +53,6 @@ def iniciar_app():
 
             if tipo and capacidad and estado:
                 try:
-                    #capacidad = int(capacidad)
                     crear_barril(tipo, capacidad, estado)
                     messagebox.showinfo("Éxito", f"Barril '{tipo}' creado correctamente.")
                     cargar_barriles()
@@ -71,6 +96,53 @@ def iniciar_app():
             cargar_barriles()
             messagebox.showinfo("Éxito", f"Barril eliminado.")
 
+    #Funcion para buscar un barril usando una id
+    def buscar_barril():
+        def mostrar_detalle_barril(barril):
+            detalle = tk.Toplevel(ventana)
+            detalle.title(f"Detalle del Barril ID {barril.id}")
+            detalle.geometry("300x250")
+
+            tk.Label(detalle, text=f"ID: {barril.id}", font=("Arial", 12)).pack(pady=10)
+            tk.Label(detalle, text=f"Tipo: {barril.tipo}", font=("Arial", 12)).pack(pady=10)
+            tk.Label(detalle, text=f"Capacidad (L): {barril.capacidad}", font=("Arial", 12)).pack(pady=10)
+            tk.Label(detalle, text=f"Estado: {barril.estado}", font=("Arial", 12)).pack(pady=10)
+
+            tk.Button(detalle, text="Cerrar", command=detalle.destroy).pack(pady=20)
+
+        def realizar_busqueda():
+            barril_id = entry_id.get()
+
+            if not barril_id:
+                messagebox.showwarning("Campos vacíos", "Ingrese un ID.")
+                return
+
+            try:
+                barril_id_int = int(barril_id)
+            except ValueError:
+                messagebox.showerror("Error", "El ID debe ser un número.")
+                return
+
+            barril = filtro_por_id(barril_id_int)
+
+            if barril:
+                # Mostrar los datos en una ventana emergente
+                mostrar_detalle_barril(barril)
+                top.destroy()  # Cerramos la ventana de ingreso del ID
+            else:
+                messagebox.showinfo("No encontrado", f"No se encontró el barril con ID {barril_id}.")
+
+            # Ventana emergente para ingresar el ID
+
+        top = tk.Toplevel(ventana)
+        top.title("Buscar Barril por ID")
+        top.geometry("300x150")
+
+        tk.Label(top, text="Ingrese el ID del Barril:").pack(pady=10)
+        entry_id = tk.Entry(top)
+        entry_id.pack()
+
+        tk.Button(top, text="Buscar", command=realizar_busqueda).pack(pady=20)
     # Función para abrir la ventana emergente de "Actualizar"
     def abrir_ventana_actualizar():
         seleccionado = tree.focus()
@@ -91,8 +163,7 @@ def iniciar_app():
 
             if nuevo_tipo and nueva_capacidad and nuevo_estado:
                 try:
-                    #nueva_capacidad = int(nueva_capacidad)
-                    actualizar_barril(barril_id, nuevo_tipo, nueva_capacidad,  nuevo_estado)
+                    actualizar_barril(barril_id, nuevo_tipo, nueva_capacidad, nuevo_estado)
                     messagebox.showinfo("Éxito", f"Barril actualizado correctamente.")
                     cargar_barriles()
                     top.destroy()
@@ -128,11 +199,11 @@ def iniciar_app():
     columnas = ("ID", "Tipo", "Capacidad (L)", "Estado")
     tree = ttk.Treeview(ventana, columns=columnas, show="headings")
 
-    # Definimos los encabezados
-    tree.heading("ID", text="ID")
-    tree.heading("Tipo", text="Tipo")
-    tree.heading("Capacidad (L)", text="Capacidad (L)")
-    tree.heading("Estado", text="Estado")
+    # Definimos los encabezados + commands para ordenar
+    tree.heading("ID", text="ID", command=ordenar_por_id_click)
+    tree.heading("Tipo", text="Tipo", command=ordenar_por_tipo_click)
+    tree.heading("Capacidad (L)", text="Capacidad (L)", command=ordenar_por_capacidad_click)
+    tree.heading("Estado", text="Estado", command=ordenar_por_estado_click)
 
     # Configuramos el ancho de las columnas
     tree.column("ID", width=5)
@@ -155,6 +226,9 @@ def iniciar_app():
 
     btn_cargar = tk.Button(contenedor_botones, text="Cargar Barril", width=20, command=abrir_ventana_cargar)
     btn_cargar.pack(pady=10)
+
+    btn_busqueda = tk.Button(contenedor_botones, text="Buscar Barril", width=20, command=buscar_barril)
+    btn_busqueda.pack(pady=10)
 
     btn_eliminar = tk.Button(contenedor_botones, text="Eliminar Barril", width=20, command=eliminar_barril)
     btn_eliminar.pack(pady=10)

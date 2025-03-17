@@ -54,14 +54,14 @@ def borrar_barril(barril_id): #Borrar un barril usando la id como parametro
     conn.commit()
     conn.close()
 
-def filtro_por_tipo(barril_tipo): #Funcion para filtrar por orden la lista segun el tipo
+def filtro_por_tipo(): #Funcion para filtrar por orden la lista segun el tipo
     conn = conectar()
     cursor = conn.cursor()
 
     cursor.execute("""
                 SELECT * FROM barriles 
                 ORDER BY 
-                    CASE capacidad
+                    CASE tipo
                         WHEN 'Summer' THEN 1
                         WHEN 'Wheat' THEN 2
                         WHEN 'Porter' THEN 3
@@ -70,7 +70,7 @@ def filtro_por_tipo(barril_tipo): #Funcion para filtrar por orden la lista segun
                     END
             """)
 
-    rows = cursor.fetchall() #fetchone() devuelve solo una fila
+    rows = cursor.fetchall()
 
     barriles = []
     for row in rows:
@@ -80,7 +80,7 @@ def filtro_por_tipo(barril_tipo): #Funcion para filtrar por orden la lista segun
     conn.close()
     return barriles
 
-def filtro_por_litros(barril_capacidad): #Funcion para filtrar por orden la lista segun la capacidad
+def filtro_por_litros(): #Funcion para filtrar por orden la lista segun la capacidad
     conn = conectar()
     cursor = conn.cursor()
 
@@ -105,7 +105,7 @@ def filtro_por_litros(barril_capacidad): #Funcion para filtrar por orden la list
     conn.close()
     return barriles
 
-def filtro_por_estado(barril_estado): #Funcion para filtrar por orden la lista segun el estado
+def filtro_por_estado(): #Funcion para filtrar por orden la lista segun el estado
     conn = conectar()
     cursor = conn.cursor()
 
@@ -130,12 +130,31 @@ def filtro_por_estado(barril_estado): #Funcion para filtrar por orden la lista s
     conn.close()
     return barriles
 
+def order_by_id(): #Funcion para filtrar por orden la lista segun la id
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM barriles ORDER BY id ASC")
+    rows = cursor.fetchall()  # fetchone() devuelve solo una fila
+
+    barriles = []
+    for row in rows:
+        barril = Barril(id=row[0], tipo=row[1], capacidad=row[2], estado=row[3])
+        barriles.append(barril)
+
+    conn.close()
+    return barriles
+
 def filtro_por_id(barril_id): #Funcion para mostrar la info de un solo barril usando la id como parametro
     conn = conectar()
     cursor = conn.cursor()
 
     cursor.execute(" SELECT * FROM barriles WHERE id = ? ", (barril_id,))
-    rows = cursor.fetchone()  # fetchone() devuelve solo una fila
+    row = cursor.fetchone()  # fetchone() devuelve solo una fila
 
     conn.close()
-    return rows
+    if row:
+        return Barril(id=row[0], tipo=row[1], capacidad=row[2], estado=row[3])
+    else:
+        return None
+
