@@ -58,17 +58,7 @@ def filtro_por_tipo(): #Funcion para filtrar por orden la lista segun el tipo
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute("""
-                SELECT * FROM barriles 
-                ORDER BY 
-                    CASE tipo
-                        WHEN 'Summer' THEN 1
-                        WHEN 'Wheat' THEN 2
-                        WHEN 'Porter' THEN 3
-                        WHEN 'Irish' THEN 4
-                        WHEN 'Hoppy' THEN 5
-                    END
-            """)
+    cursor.execute(" SELECT * FROM barriles ORDER BY tipo DESC")
 
     rows = cursor.fetchall()
 
