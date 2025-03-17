@@ -8,13 +8,13 @@ def crear_tabla():
     cursor = conn.cursor()
 
     cursor.execute("""
-         CREATE TABLE IF NOT EXISTS barriles
-          ( id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    tipo TEXT NOT NULL,
-                    capacidad REAL NOT NULL,
-                    estado TEXT NOT NULL,
-        )                                              
-    """)
+            CREATE TABLE IF NOT EXISTS barriles (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                tipo TEXT NOT NULL,
+                capacidad REAL NOT NULL,
+                estado TEXT NOT NULL
+            )
+        """)
 
     conn.commit()
     conn.close()
