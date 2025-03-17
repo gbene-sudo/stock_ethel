@@ -8,3 +8,4 @@ class Barril:
 
     def __str__(self):
         return f'ID: {self.id} | Tipo: {self.tipo} | Estado: {self.estado} | Capacidad: {self.capacidad}'
+
