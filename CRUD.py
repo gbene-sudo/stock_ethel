@@ -1,14 +1,14 @@
 from DB import conectar
 from models import Barril
 
-def crear_barril():
+def crear_barril(tipo,capacidad,estado):
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute(""""
+    cursor.execute("""
         INSERT INTO barriles (tipo,estado,capacidad)
             VALUES (?,?,?)
-    """), (Barril.tipo, Barril.estado, Barril.capacidad)
+    """, (tipo, capacidad, estado))
 
     conn.commit()
     conn.close()
