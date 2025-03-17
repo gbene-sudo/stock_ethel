@@ -1,7 +1,7 @@
 from DB import conectar
 from models import Barril
 
-def crear_barril(tipo,capacidad,estado):
+def crear_barril(tipo,capacidad,estado): #Creacion de un barril
     conn = conectar()
     cursor = conn.cursor()
 
@@ -19,7 +19,7 @@ def crear_barril(tipo,capacidad,estado):
         return last_id
     '''
 
-def obtener_barriles():
+def obtener_barriles(): #Mostrar todos los barriles
     conn = conectar()
     cursor = conn.cursor()
 
@@ -34,7 +34,7 @@ def obtener_barriles():
     conn.close()
     return barriles
 
-def actualizar_barril(barril_id, tipo_barril, nuevo_estado, nuevo_capacidad):
+def actualizar_barril(barril_id, tipo_barril, nuevo_estado, nuevo_capacidad): #Actualizar los datos de un barril, pidiendole los nuevos
     conn = conectar()
     cursor = conn.cursor()
 
@@ -45,7 +45,7 @@ def actualizar_barril(barril_id, tipo_barril, nuevo_estado, nuevo_capacidad):
     conn.commit()
     conn.close()
 
-def borrar_barril(barril_id):
+def borrar_barril(barril_id): #Borrar un barril usando la id como parametro
     conn = conectar()
     cursor = conn.cursor()
 
@@ -84,7 +84,7 @@ def filtro_por_litros(barril_capacidad): #Funcion para mostrar la info de una ca
     conn.close()
     return barriles
 
-def filtro_por_estado(barril_estado):
+def filtro_por_estado(barril_estado): #Funcion para mostrar la info de una camada de barriles con el mismo estado
     conn = conectar()
     cursor = conn.cursor()
 

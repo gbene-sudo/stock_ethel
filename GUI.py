@@ -65,11 +65,11 @@ def iniciar_app():
         valores = tree.item(seleccionado, "values")
         barril_id = valores[0]
 
-        confirmacion = messagebox.askyesno("Eliminar", f"¿Está seguro de eliminar el barril ID {barril_id}?")
+        confirmacion = messagebox.askyesno("Eliminar", f"¿Está seguro de eliminar este barril?")
         if confirmacion:
             borrar_barril(barril_id)
             cargar_barriles()
-            messagebox.showinfo("Éxito", f"Barril ID {barril_id} eliminado.")
+            messagebox.showinfo("Éxito", f"Barril eliminado.")
 
     # Función para abrir la ventana emergente de "Actualizar"
     def abrir_ventana_actualizar():
@@ -93,7 +93,7 @@ def iniciar_app():
                 try:
                     nueva_capacidad = float(nueva_capacidad)
                     actualizar_barril(barril_id, nuevo_tipo, nueva_capacidad, nuevo_estado)
-                    messagebox.showinfo("Éxito", f"Barril ID {barril_id} actualizado correctamente.")
+                    messagebox.showinfo("Éxito", f"Barril actualizado correctamente.")
                     cargar_barriles()
                     top.destroy()
                 except ValueError:
@@ -135,7 +135,7 @@ def iniciar_app():
     tree.heading("Estado", text="Estado")
 
     # Configuramos el ancho de las columnas
-    tree.column("ID", width=50)
+    tree.column("ID", width=5)
     tree.column("Tipo", width=150)
     tree.column("Capacidad (L)", width=120)
     tree.column("Estado", width=150)
