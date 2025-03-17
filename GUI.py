@@ -5,6 +5,9 @@ from CRUD import actualizar_barril, obtener_barriles, borrar_barril, crear_barri
 # Importa tus funciones de filtros
 from CRUD import filtro_por_tipo, filtro_por_litros, filtro_por_estado
 
+TIPOS_VALIDOS = ["Wheat", "Hoppy", "Summer", "Irish", "Porter"]
+ESTADOS_VALIDOS = ["Lleno", "Incompleto", "Entregado", "Bar", "Latas"]
+CAPACIDADES_VALIDOS = [10, 15, 20, 30, 50]
 
 def iniciar_app():
     ventana = tk.Tk()
@@ -47,36 +50,43 @@ def iniciar_app():
     # Función para abrir la ventana emergente de "Cargar"
     def abrir_ventana_cargar():
         def guardar_barril():
-            tipo = entry_tipo.get()
-            capacidad = entry_capacidad.get()
-            estado = entry_estado.get()
+            tipo = tipo_combo.get()
+            capacidad = capacidad_combo.get()
+            estado = estado_combo.get()
 
-            if tipo and capacidad and estado:
-                try:
-                    crear_barril(tipo, capacidad, estado)
-                    messagebox.showinfo("Éxito", f"Barril '{tipo}' creado correctamente.")
-                    cargar_barriles()
-                    top.destroy()
-                except ValueError:
-                    messagebox.showerror("Error", "Capacidad debe ser un número.")
-            else:
-                messagebox.showwarning("Campos vacíos", "Complete todos los campos.")
+            if tipo not in TIPOS_VALIDOS:
+                messagebox.showerror("Error", f"Tipo inválido. Debe ser uno de: {', '.join(TIPOS_VALIDOS)}")
+                return
+
+            if not capacidad.isdigit() or int(capacidad) not in CAPACIDADES_VALIDOS:
+                messagebox.showerror("Error",
+                                     f"Capacidad inválida. Debe ser uno de: {', '.join(map(str, CAPACIDADES_VALIDOS))} litros.")
+                return
+
+            if estado not in ESTADOS_VALIDOS:
+                messagebox.showerror("Error", f"Estado inválido. Debe ser uno de: {', '.join(ESTADOS_VALIDOS)}")
+                return
+
+            crear_barril(tipo, int(capacidad), estado)
+            messagebox.showinfo("Éxito", f"Barril '{tipo}' creado correctamente.")
+            cargar_barriles()
+            top.destroy()
 
         top = tk.Toplevel(ventana)
         top.title("Cargar Nuevo Barril")
-        top.geometry("300x250")
+        top.geometry("300x300")
 
         tk.Label(top, text="Tipo:").pack(pady=5)
-        entry_tipo = tk.Entry(top)
-        entry_tipo.pack()
+        tipo_combo = ttk.Combobox(top, values=TIPOS_VALIDOS, state="readonly")
+        tipo_combo.pack()
 
         tk.Label(top, text="Capacidad (L):").pack(pady=5)
-        entry_capacidad = tk.Entry(top)
-        entry_capacidad.pack()
+        capacidad_combo = ttk.Combobox(top, values=CAPACIDADES_VALIDOS, state="readonly")
+        capacidad_combo.pack()
 
         tk.Label(top, text="Estado:").pack(pady=5)
-        entry_estado = tk.Entry(top)
-        entry_estado.pack()
+        estado_combo = ttk.Combobox(top, values=ESTADOS_VALIDOS, state="readonly")
+        estado_combo.pack()
 
         tk.Button(top, text="Guardar", command=guardar_barril).pack(pady=20)
 
@@ -157,39 +167,52 @@ def iniciar_app():
         estado_actual = valores[3]
 
         def guardar_actualizacion():
-            nuevo_tipo = entry_tipo.get()
-            nueva_capacidad = entry_capacidad.get()
-            nuevo_estado = entry_estado.get()
+            nuevo_tipo = tipo_combo.get()
+            nueva_capacidad = capacidad_combo.get()
+            nuevo_estado = estado_combo.get()
 
-            if nuevo_tipo and nueva_capacidad and nuevo_estado:
-                try:
-                    actualizar_barril(barril_id, nuevo_tipo, nueva_capacidad, nuevo_estado)
-                    messagebox.showinfo("Éxito", f"Barril actualizado correctamente.")
-                    cargar_barriles()
-                    top.destroy()
-                except ValueError:
-                    messagebox.showerror("Error", "Capacidad debe ser un número.")
-            else:
-                messagebox.showwarning("Campos vacíos", "Complete todos los campos.")
+            if nuevo_tipo not in TIPOS_VALIDOS:
+                messagebox.showerror("Error", f"Tipo inválido. Debe ser uno de: {', '.join(TIPOS_VALIDOS)}")
+                return
+
+            try:
+                capacidad_int = int(nueva_capacidad)
+            except ValueError:
+                messagebox.showerror("Error", "Debe seleccionar una capacidad válida.")
+                return
+
+            if capacidad_int not in CAPACIDADES_VALIDOS:
+                messagebox.showerror("Error",
+                                     f"Capacidad inválida. Debe ser una de: {', '.join(map(str, CAPACIDADES_VALIDOS))}")
+                return
+
+            if nuevo_estado not in ESTADOS_VALIDOS:
+                messagebox.showerror("Error", f"Estado inválido. Debe ser uno de: {', '.join(ESTADOS_VALIDOS)}")
+                return
+
+            actualizar_barril(barril_id, nuevo_tipo, nuevo_estado, int(nueva_capacidad))
+            messagebox.showinfo("Éxito", f"Barril actualizado correctamente.")
+            cargar_barriles()
+            top.destroy()
 
         top = tk.Toplevel(ventana)
         top.title(f"Actualizar Barril ID {barril_id}")
-        top.geometry("300x250")
+        top.geometry("300x300")
 
         tk.Label(top, text="Tipo:").pack(pady=5)
-        entry_tipo = tk.Entry(top)
-        entry_tipo.insert(0, tipo_actual)
-        entry_tipo.pack()
+        tipo_combo = ttk.Combobox(top, values=TIPOS_VALIDOS, state="readonly")
+        tipo_combo.set(tipo_actual)
+        tipo_combo.pack()
 
         tk.Label(top, text="Capacidad (L):").pack(pady=5)
-        entry_capacidad = tk.Entry(top)
-        entry_capacidad.insert(0, capacidad_actual)
-        entry_capacidad.pack()
+        capacidad_combo = ttk.Combobox(top, values=CAPACIDADES_VALIDOS, state="readonly")
+        capacidad_combo.set(capacidad_actual)
+        capacidad_combo.pack()
 
         tk.Label(top, text="Estado:").pack(pady=5)
-        entry_estado = tk.Entry(top)
-        entry_estado.insert(0, estado_actual)
-        entry_estado.pack()
+        estado_combo = ttk.Combobox(top, values=ESTADOS_VALIDOS, state="readonly")
+        estado_combo.set(estado_actual)
+        estado_combo.pack()
 
         tk.Button(top, text="Guardar Cambios", command=guardar_actualizacion).pack(pady=20)
 
