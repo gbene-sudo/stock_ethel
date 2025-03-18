@@ -14,6 +14,33 @@ def iniciar_app():
     ventana.title("Cervecería Ethel")
     ventana.geometry("800x500")
 
+    style = ttk.Style()
+    style.theme_use("clam")  # Cambia el tema (clam suele ser más limpio)
+
+    # Colores para las filas
+    style.configure("Treeview",
+                    background="#f0f0f0",
+                    foreground="black",
+                    rowheight=30,
+                    fieldbackground="#f0f0f0",
+                    font=("Segoe UI", 12))
+
+    # Colores para el encabezado
+    style.configure("Treeview.Heading",
+                    background="#333333",
+                    foreground="white",
+                    font=("Verdana", 15))
+
+    style.map("Treeview",
+              background=[
+                  ("selected", "#6c757d"),  # Fondo cuando está seleccionado
+                  ("active", "#010546")  # Fondo cuando el mouse pasa por encima
+              ],
+              foreground=[
+                  ("selected", "#ffffff"),  # Texto al seleccionar
+                  ("active", "#010546")  # Texto al pasar el mouse (hover)
+              ])
+
     # Función para refrescar los datos en la tabla
     def cargar_barriles(lista_barriles=None):
         for row in tree.get_children():
