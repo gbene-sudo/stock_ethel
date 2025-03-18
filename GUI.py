@@ -13,33 +13,25 @@ def iniciar_app():
     ventana = tk.Tk()
     ventana.title("Cervecería Ethel")
     ventana.geometry("800x500")
+    ventana.configure(bg="#000000")
 
     style = ttk.Style()
-    style.theme_use("clam")  # Cambia el tema (clam suele ser más limpio)
+    #style.theme_use("clam")  # Cambia el tema (clam suele ser más limpio)
 
     # Colores para las filas
     style.configure("Treeview",
-                    background="#f0f0f0",
+                    background="#a9a9a9",
                     foreground="black",
-                    rowheight=30,
+                    rowheight=25,
                     fieldbackground="#f0f0f0",
-                    font=("Segoe UI", 12))
+                    font=("Segoe UI", 11))
 
     # Colores para el encabezado
     style.configure("Treeview.Heading",
-                    background="#333333",
-                    foreground="white",
+                    background="#000000",
+                    foreground="black",
                     font=("Verdana", 15))
 
-    style.map("Treeview",
-              background=[
-                  ("selected", "#6c757d"),  # Fondo cuando está seleccionado
-                  ("active", "#010546")  # Fondo cuando el mouse pasa por encima
-              ],
-              foreground=[
-                  ("selected", "#ffffff"),  # Texto al seleccionar
-                  ("active", "#010546")  # Texto al pasar el mouse (hover)
-              ])
 
     # Función para refrescar los datos en la tabla
     def cargar_barriles(lista_barriles=None):
@@ -264,26 +256,27 @@ def iniciar_app():
     tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
     # Scrollbar vertical para el treeview
-    scrollbar = ttk.Scrollbar(ventana, orient=tk.VERTICAL, command=tree.yview)
-    tree.configure(yscroll=scrollbar.set)
-    scrollbar.pack(side=tk.LEFT, fill=tk.Y)
+    scrollbar = ttk.Scrollbar(ventana, orient=tk.VERTICAL, command=tree.yview,)
+    tree.configure(yscroll=scrollbar.set, )
+    scrollbar.pack(side=tk.LEFT, fill=tk.Y,)
 
     # ===================
     # Botones de acción
     # ===================
     contenedor_botones = tk.Frame(ventana)
     contenedor_botones.pack(side=tk.RIGHT, fill=tk.Y, padx=10)
+    contenedor_botones.configure(bg="#000000",)
 
-    btn_cargar = tk.Button(contenedor_botones, text="Cargar Barril", width=20, command=abrir_ventana_cargar)
+    btn_cargar = tk.Button(contenedor_botones, text="Cargar Barril", width=20, bg="#000000",fg="#FFFFFF", command=abrir_ventana_cargar)
     btn_cargar.pack(pady=10)
 
-    btn_busqueda = tk.Button(contenedor_botones, text="Buscar Barril", width=20, command=buscar_barril)
+    btn_busqueda = tk.Button(contenedor_botones, text="Buscar Barril", width=20,bg="#000000",fg="#FFFFFF", command=buscar_barril)
     btn_busqueda.pack(pady=10)
 
-    btn_eliminar = tk.Button(contenedor_botones, text="Eliminar Barril", width=20, command=eliminar_barril)
+    btn_eliminar = tk.Button(contenedor_botones, text="Eliminar Barril", width=20,bg="#000000",fg="#FFFFFF", command=eliminar_barril)
     btn_eliminar.pack(pady=10)
 
-    btn_actualizar = tk.Button(contenedor_botones, text="Actualizar Barril", width=20, command=abrir_ventana_actualizar)
+    btn_actualizar = tk.Button(contenedor_botones, text="Actualizar Barril", width=20,bg="#000000",fg="#FFFFFF", command=abrir_ventana_actualizar)
     btn_actualizar.pack(pady=10)
 
     # Cargar la tabla al iniciar
