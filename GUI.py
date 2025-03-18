@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from models import Barril
 from CRUD import actualizar_barril, obtener_barriles, borrar_barril, crear_barril, order_by_id, filtro_por_id
-# Importa tus funciones de filtros
 from CRUD import filtro_por_tipo, filtro_por_litros, filtro_por_estado
 
 TIPOS_VALIDOS = ["Wheat", "Hoppy", "Summer", "Irish", "Porter"]
