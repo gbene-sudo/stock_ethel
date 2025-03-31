@@ -2,10 +2,10 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from models import Barril
 from CRUD import actualizar_barril, obtener_barriles, borrar_barril, crear_barril, order_by_id, filtro_por_id
-from CRUD import filtro_por_tipo, filtro_por_litros, filtro_por_estado
+from CRUD import filtro_por_litros, filtro_por_estado,filtro_por_tipo_y_estado
 
 TIPOS_VALIDOS = ["Wheat", "Hoppy", "Summer", "Irish", "Porter"]
-ESTADOS_VALIDOS = ["Lleno", "Incompleto", "Entregado", "Bar", "Latas", "Vacio"]
+ESTADOS_VALIDOS = ["Lleno", "Entregado", "Latas", "Bar", "Incompleto", "Vacio"]
 CAPACIDADES_VALIDOS = [10, 15, 20, 30, 50]
 
 def iniciar_app():
@@ -64,7 +64,7 @@ def iniciar_app():
         if columna == "ID":
             barriles_ordenados = order_by_id(orden)
         elif columna == "Tipo":
-            barriles_ordenados = filtro_por_tipo(orden)
+            barriles_ordenados = filtro_por_tipo_y_estado(orden)
         elif columna == "Capacidad":
             barriles_ordenados = filtro_por_litros(orden)
         elif columna == "Estado":

@@ -136,6 +136,58 @@ def order_by_id(orden="ASC"): #Funcion para filtrar por orden la lista segun la 
 
     conn.close()
     return barriles
+'''
+def filtro_por_tipo_y_capacidad(orden="DESC"):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute(f"""
+            SELECT * FROM barriles 
+            ORDER BY tipo {orden}, capacidad DESC
+        """)
+    rows = cursor.fetchall()
+
+    barriles = []
+    for row in rows:
+        barril = Barril(id=row[0], tipo=row[1], capacidad=row[2], estado=row[3])
+        barriles.append(barril)
+
+    conn.close()
+    return barriles
+'''
+
+def filtro_por_tipo_y_estado(orden_tipo="ASC"):
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute(f"""
+        SELECT * FROM barriles 
+        ORDER BY 
+            CASE tipo
+                WHEN 'Summer' THEN 1
+                WHEN 'Hoppy' THEN 2
+                WHEN 'Wheat' THEN 3
+                WHEN 'Irish' THEN 4
+                WHEN 'Porter' THEN 5
+            END {orden_tipo}, 
+            CASE estado
+                WHEN 'Lleno' THEN 1
+                WHEN 'Entregado' THEN 2
+                WHEN 'Latas' THEN 3
+                WHEN 'Bar' THEN 4
+                WHEN 'Incompleto' THEN 5
+                WHEN 'Vacio' THEN 6
+            END ASC
+    """)
+    rows = cursor.fetchall()
+
+    barriles = []
+    for row in rows:
+        barril = Barril(id=row[0], tipo=row[1], capacidad=row[2], estado=row[3])
+        barriles.append(barril)
+
+    conn.close()
+    return barriles
 
 def filtro_por_id(barril_id): #Funcion para mostrar la info de un solo barril usando la id como parametro
     conn = conectar()
