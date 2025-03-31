@@ -105,10 +105,11 @@ def filtro_por_estado(orden="ASC"): #Funcion para filtrar por orden la lista seg
         ORDER BY 
             CASE estado
                 WHEN 'Lleno' THEN 1
-                WHEN 'Incompleto' THEN 2
-                WHEN 'Entregado' THEN 3
+                WHEN 'Entregado' THEN 2
+                WHEN 'Latas' THEN 3
                 WHEN 'Bar' THEN 4
-                WHEN 'Latas' THEN 5
+                WHEN 'Incompleto' THEN 5
+                WHEN 'Vacio' THEN 6
             END {orden}
     """)
     rows = cursor.fetchall()  # fetchone() devuelve solo una fila

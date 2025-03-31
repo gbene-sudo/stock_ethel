@@ -5,7 +5,7 @@ from CRUD import actualizar_barril, obtener_barriles, borrar_barril, crear_barri
 from CRUD import filtro_por_tipo, filtro_por_litros, filtro_por_estado
 
 TIPOS_VALIDOS = ["Wheat", "Hoppy", "Summer", "Irish", "Porter"]
-ESTADOS_VALIDOS = ["Lleno", "Incompleto", "Entregado", "Bar", "Latas"]
+ESTADOS_VALIDOS = ["Lleno", "Incompleto", "Entregado", "Bar", "Latas", "Vacio"]
 CAPACIDADES_VALIDOS = [10, 15, 20, 30, 50]
 
 def iniciar_app():
