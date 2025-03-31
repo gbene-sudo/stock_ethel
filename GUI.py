@@ -45,25 +45,39 @@ def iniciar_app():
 
         for barril in barriles:
             tree.insert("", tk.END, values=(barril.id, barril.tipo, barril.capacidad, barril.estado))
-
+    # =====================
+    # Variables de ordenamiento
+    # =====================
+    order_states = {
+        "ID": True,  # True para ascendente, False para descendente
+        "Tipo": True,
+        "Capacidad": True,
+        "Estado": True,
+    }
     # =====================
     # FUNCIONES PARA ORDENAR
     # =====================
-    def ordenar_por_tipo_click():
-        barriles_ordenados = filtro_por_tipo()
+    def ordenar_por(columna):
+        order_states[columna] = not order_states[columna]
+        orden = "ASC" if order_states[columna] else "DESC"
+
+        if columna == "ID":
+            barriles_ordenados = order_by_id(orden)
+        elif columna == "Tipo":
+            barriles_ordenados = filtro_por_tipo(orden)
+        elif columna == "Capacidad":
+            barriles_ordenados = filtro_por_litros(orden)
+        elif columna == "Estado":
+            barriles_ordenados = filtro_por_estado(orden)
+
         cargar_barriles(barriles_ordenados)
 
-    def ordenar_por_id_click():
-        barriles_ordenados = order_by_id()
-        cargar_barriles(barriles_ordenados)
-
-    def ordenar_por_capacidad_click():
-        barriles_ordenados = filtro_por_litros()
-        cargar_barriles(barriles_ordenados)
-
-    def ordenar_por_estado_click():
-        barriles_ordenados = filtro_por_estado()
-        cargar_barriles(barriles_ordenados)
+    #Funcion para manejar el clic en el encabezado
+    def on_colum_click(event):
+        column = tree.identify_column(event.x)
+        column = column.replace('#', '')
+        column_name = ["ID", "Tipo", "Capacidad (L)", "Estado"][int(column)-1]
+        ordenar_por(column_name)
 
     # Función para abrir la ventana emergente de "Cargar"
     def abrir_ventana_cargar():
@@ -241,10 +255,10 @@ def iniciar_app():
     tree = ttk.Treeview(ventana, columns=columnas, show="headings")
 
     # Definimos los encabezados + commands para ordenar
-    tree.heading("ID", text="ID", command=ordenar_por_id_click)
-    tree.heading("Tipo", text="Tipo", command=ordenar_por_tipo_click)
-    tree.heading("Capacidad (L)", text="Capacidad (L)", command=ordenar_por_capacidad_click)
-    tree.heading("Estado", text="Estado", command=ordenar_por_estado_click)
+    tree.heading("ID", text="ID", command=lambda: ordenar_por("ID"))
+    tree.heading("Tipo", text="Tipo", command=lambda: ordenar_por("Tipo"))
+    tree.heading("Capacidad (L)", text="Capacidad (L)", command=lambda: ordenar_por("Capacidad"))
+    tree.heading("Estado", text="Estado", command=lambda: ordenar_por("Estado"))
 
     # Configuramos el ancho de las columnas
     tree.column("ID", width=5)

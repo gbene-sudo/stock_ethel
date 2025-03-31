@@ -54,12 +54,12 @@ def borrar_barril(barril_id): #Borrar un barril usando la id como parametro
     conn.commit()
     conn.close()
 
-def filtro_por_tipo(): #Funcion para filtrar por orden la lista segun el tipo
+#FILTROS
+def filtro_por_tipo(orden="ASC"): #Funcion para filtrar por orden la lista segun el tipo
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute(" SELECT * FROM barriles ORDER BY tipo DESC")
-
+    cursor.execute(f" SELECT * FROM barriles ORDER BY tipo {orden}")
     rows = cursor.fetchall()
 
     barriles = []
@@ -70,11 +70,12 @@ def filtro_por_tipo(): #Funcion para filtrar por orden la lista segun el tipo
     conn.close()
     return barriles
 
-def filtro_por_litros(): #Funcion para filtrar por orden la lista segun la capacidad
+def filtro_por_litros(orden="ASC"): #Funcion para filtrar por orden la lista segun la capacidad
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute("""
+
+    cursor.execute(f"""
             SELECT * FROM barriles 
             ORDER BY 
                 CASE capacidad
@@ -83,7 +84,7 @@ def filtro_por_litros(): #Funcion para filtrar por orden la lista segun la capac
                     WHEN '20' THEN 3
                     WHEN '15' THEN 4
                     WHEN '10' THEN 5
-                END
+                END {orden}
         """)
     rows = cursor.fetchall()  # fetchone() devuelve solo una fila
 
@@ -95,11 +96,11 @@ def filtro_por_litros(): #Funcion para filtrar por orden la lista segun la capac
     conn.close()
     return barriles
 
-def filtro_por_estado(): #Funcion para filtrar por orden la lista segun el estado
+def filtro_por_estado(orden="ASC"): #Funcion para filtrar por orden la lista segun el estado
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(f"""
         SELECT * FROM barriles 
         ORDER BY 
             CASE estado
@@ -108,7 +109,7 @@ def filtro_por_estado(): #Funcion para filtrar por orden la lista segun el estad
                 WHEN 'Entregado' THEN 3
                 WHEN 'Bar' THEN 4
                 WHEN 'Latas' THEN 5
-            END
+            END {orden}
     """)
     rows = cursor.fetchall()  # fetchone() devuelve solo una fila
 
@@ -120,11 +121,11 @@ def filtro_por_estado(): #Funcion para filtrar por orden la lista segun el estad
     conn.close()
     return barriles
 
-def order_by_id(): #Funcion para filtrar por orden la lista segun la id
+def order_by_id(orden="ASC"): #Funcion para filtrar por orden la lista segun la id
     conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM barriles ORDER BY id ASC")
+    cursor.execute(f"SELECT * FROM barriles ORDER BY id {orden}")
     rows = cursor.fetchall()  # fetchone() devuelve solo una fila
 
     barriles = []
